@@ -5,6 +5,7 @@
 #include <string>
 #include <cctype>
 #include <cmath>
+#include <stack> // Добавлен недостающий include
 
 // Вспомогательная функция для разбиения строки на токены
 std::vector<std::string> tokenize(const std::string& expression) {
@@ -48,23 +49,32 @@ double evaluate_rpn(const std::string& expression) {
         if (is_number(token)) {
             stack.push(std::stod(token));
         } else {
-            double a, b, result;
-
             // Обрабатываем унарные операции
-            if (token == "sin") {
+            if (token == "sin" || token == "cos" || token == "tan" ||
+                token == "log" || token == "sqrt") {
                 if (stack.empty()) {
                     throw std::invalid_argument("Not enough operands for operator '" + token + "'");
                 }
-                a = stack.top(); stack.pop();
-                result = sin(a * M_PI / 180.0);
+                double a = stack.top(); stack.pop();
+                double result = 0.0;
+
+                if (token == "sin") {
+                    result = sin(a * M_PI / 180.0);
+                } else if (token == "cos") {
+                    result = cos(a * M_PI / 180.0);
+
+                }
+
+                stack.push(result);
             }
             // Обрабатываем бинарные операции
             else {
                 if (stack.size() < 2) {
                     throw std::invalid_argument("Not enough operands for operator '" + token + "'");
                 }
-                b = stack.top(); stack.pop();
-                a = stack.top(); stack.pop();
+                double b = stack.top(); stack.pop();
+                double a = stack.top(); stack.pop();
+                double result = 0.0;
 
                 if (token == "+") {
                     result = a + b;
@@ -82,9 +92,9 @@ double evaluate_rpn(const std::string& expression) {
                 } else {
                     throw std::invalid_argument("Invalid operator: '" + token + "'");
                 }
-            }
 
-            stack.push(result);
+                stack.push(result);
+            }
         }
     }
 
