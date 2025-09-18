@@ -50,8 +50,7 @@ double evaluate_rpn(const std::string& expression) {
             stack.push(std::stod(token));
         } else {
             // Обрабатываем унарные операции
-            if (token == "sin" || token == "cos" || token == "tan" ||
-                token == "log" || token == "sqrt") {
+            if (token == "sin" || token == "cos" ) {
                 if (stack.empty()) {
                     throw std::invalid_argument("Not enough operands for operator '" + token + "'");
                 }
